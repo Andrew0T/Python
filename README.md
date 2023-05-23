@@ -35,6 +35,30 @@ Exercise 1.2:
     I chose to use lists for the outer structure to store the recipe dictionaries because lists are sequential, are mutable, able to store multiple recipes and can be updated or added to in future.
   
   
+Exercise 1.3: Functions and Other Operations in Python
+
+    Task - Goals
+
+    Implement conditional statements in Python to determine program flow
+    Use loops to reduce time and effort in Python programming
+    Write functions to organize Python code
+    
+    def take_recipes () =    
+        name (str): Stores the name of the recipe.
+        cooking_time (int): Stores the cooking time (in minutes).
+        ingredients (list): A list that stores ingredients, each of the string data type.
+        recipe (dictionary): Stores the name, cooking_time, and ingredients variables (e.g., recipe = {'name': name, 'cooking_time': cooking_time, 'ingredients': ingredients}).
+    
+    Define recipes and ingredients lists
+    User can enter recipes which are then added to the Recipes List
+    with the recipe's name, cooking time and ingredients
+    A "for" loop sort the ingredients individually then 
+    adds each to the Ingredients List
+    Another "for" loop determines difficulty of each recipe using certain criteria,
+    then prints the value of each recipe within the Recipe List plus Difficulty
+    Prints all ingredients from Ingredients List
+
+
 
 
   
