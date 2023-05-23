@@ -47,7 +47,8 @@ Exercise 1.3: Functions and Other Operations in Python
         name (str): Stores the name of the recipe.
         cooking_time (int): Stores the cooking time (in minutes).
         ingredients (list): A list that stores ingredients, each of the string data type.
-        recipe (dictionary): Stores the name, cooking_time, and ingredients variables (e.g., recipe = {'name': name, 'cooking_time': cooking_time, 'ingredients': ingredients}).
+        recipe (dictionary): Stores the name, cooking_time, and ingredients variables 
+        recipe = {'name': name, 'cooking_time': cooking_time, 'ingredients': ingredients}.
     
     Define recipes and ingredients lists
     User can enter recipes which are then added to the Recipes List
