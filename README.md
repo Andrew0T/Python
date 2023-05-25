@@ -60,6 +60,16 @@ Exercise 1.3: Functions and Other Operations in Python
     Prints all ingredients from Ingredients List
 
 
+Exercise 1.4: File Handling in Python
+    Learning Goals
+
+    Use files to store and retrieve data in Python
+    
+    Create a recipe_input.py to store recipe data to a .bin binary file
+    Create a binary file should one no exist
+    Create a recipe_search.py to retrieve the recipe data from this binary file
+    
+
 
 
   
