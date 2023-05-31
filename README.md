@@ -70,6 +70,25 @@ Exercise 1.4: File Handling in Python
     Create a recipe_search.py to retrieve the recipe data from this binary file
     
 
+Exercise 1.5: Object-Oriented Programming in Python
+
+    Learning Goals
+    
+    Apply object-oriented programming concepts to a Recipe app
+    
+    Create recipe_oop.py in which:
+
+        Build a Recipe class with relevant data and procedural attributes (data attributes and methods)
+        Create and store recipes using class methods
+        Use these class methods to search for recipes according to specific ingredients.
+
+    Folders / Files
+
+        Code Practice folder that contains the screenshots and file for the optional task
+        Screenshots of the task (recipe_list.png, recipe_search.png)
+        recipe_oop.py
+        learning journal 1.5
+
 
 
   
