@@ -1,15 +1,20 @@
 # Creates an engine object that connects to the desired database
 from sqlalchemy import create_engine
-engine = create_engine("mysql://cf-python:password@localhost/task_database")
-
 # Create Base class
 from sqlalchemy.orm import declarative_base
-Base = declarative_base()
-
 # Import column object
 from sqlalchemy import Column
-# Iport Integer and String types
+# Import Integer and String types
 from sqlalchemy.types import Integer, String
+# Imports the sessionmaker to make changes to the database
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine("mysql://cf-python:password@localhost/task_database")
+Base = declarative_base()
+# Creates the session object to make changes to the database
+Session = sessionmaker(bind=engine)
+session = Session()
+
 
 # Defines Recipe class that inherits Base class
 class Recipe(Base):
@@ -28,10 +33,10 @@ class Recipe(Base):
   def __str__(self):
     print("="*60)
     return "Recipe ID: " + str(self.id) +\
-        "\nName:  " + str(self.name) +\
-        "\nIngredients:\f"+ str(self.ingredients) +\
+        "\nName:  " + self.name +\
+        "\nIngredients:\f"+ self.ingredients +\
         "\nCooking Time:  " + str(self.cooking_time) +\
-        "\nDifficulty:  " + str(self.difficulty)
+        "\nDifficulty:  " + self.difficulty
     print(end="=")
     print("="*59) 
 
@@ -45,22 +50,15 @@ class Recipe(Base):
       self.difficulty = "Intermediate"
     elif int(self.cooking_time) >= 10 and len(self.return_ingredients_as_list()) >= 4:
       self.difficulty = "Hard"
-    return self.difficulty
 
   def return_ingredients_as_list(self):
-    recipes_list = session.query(Recipe).all()
-    for recipe in recipes_list:
+    ingredients_list = []
+    if not self.ingredients.split:
       ingredients = self.ingredients.split(", ")  # split the strings and create a list
-    return self.ingredients
+    return ingredients_list
   
-
 # Create model table
 Base.metadata.create_all(engine)
-
-# Creates the session object to make changes to the database
-from sqlalchemy.orm import sessionmaker
-Session = sessionmaker(bind=engine)
-session = Session()
 
 # Users are able to create a recipe using name, ingredients and cooking time.
 def  create_recipe(): 
@@ -130,7 +128,7 @@ def  create_recipe():
 def view_all_recipes():
   all_recipes =  session.query(Recipe).all()
   # If no recipes found in database returns to main menu
-  if session.query(Recipe).count() == 0:
+  if not all_recipes: # session.query(Recipe).count() == 0:
     print("\nSorry, there are no recipes in the database.", end="-  ")
     print("\nPlease enter a recipe")
     return None
@@ -151,35 +149,36 @@ def search_by_ingredient():
   else:
     # Retrieves only the values from the ingredients column
     results = session.query(Recipe.ingredients).all()
-
   # Initialises an empty list called all_ingredients
   all_ingredients = []
   # Append all ingredients to all_ingredients list
   for ingredients_tup in results:
       for ingredients_str in ingredients_tup: 
         ingredients_list = ingredients_str.split(", ") # splits each ingredients from ingredients_tup
-        all_ingredients.extend(ingredients_list)
+        for ingredient in ingredients_list:
+          if ingredient not in all_ingredients:
+            all_ingredients.append(ingredient)
 
   # Removes duplicate ingredients  
-  all_ingredients = list(dict.fromkeys(all_ingredients))
+  # all_ingredients = list(dict.fromkeys(all_ingredients))
   # All ingredients enumerated
-  all_ingredients_list = list(enumerate(all_ingredients))
+  # all_ingredients_list = list(enumerate(all_ingredients))
 
   print("\nList of Ingredients: ", )
   print("="*60)
-  for ingredients_tup in all_ingredients_list:
-    print("\n" + str(ingredients_tup[0] + 1) + ". " + ingredients_tup[1])
+  for index, ingredients_tup in enumerate(all_ingredients, 1):
+    print("\n" + str(index) + ". " + ingredients_tup)
 
   try:
     # Asks user to choose the ingredient by it's corresponding number
     search_number = input("\nEnter the ingredient's number. You can enter more than one:\t")
-    search_number_input = search_number.split(", ")
+    search_number_input = search_number.strip().split(" ")
 
     # Search ingredients list created to stored the selected ingredients
     search_ingredients = []
     for number in search_number_input:
       search_index = int(number) - 1
-      search_ingredient = all_ingredients_list[search_index][1]
+      search_ingredient = all_ingredients[search_index]
       search_ingredients.append(search_ingredient)
       print("\nYou have selected the following ingredients:\n", search_ingredients)
 
@@ -190,8 +189,13 @@ def search_by_ingredient():
       condition_list.append(condition)
       searched_recipes = session.query(Recipe).filter(*condition_list).all()
       # print(searched_recipes)
-  except:
+  except IndexError:
+    print("Sorry, the option selected is incorrect")
+    return None
+  except Exception as error:
     print("\nSorry, something went wrong. Please enter a number from this list.")
+    print(error)
+    return None
   else:
     print("\nThese recipes contain the selected ingredient\s:")
     print(("="*60))
@@ -224,11 +228,6 @@ def edit_recipe():
     for result in results:
       selected_id.append(selected_id)
     
-    # if not recipe_id_to_edit.isnumeric():
-    #   print("\nPlease use a number.")
-    # elif not int(recipe_id_to_edit):
-    #   print("\nPlease use a number shown")
-    # else:
     recipe_to_edit = session.get(Recipe, int(recipe_id_to_edit))
     print(" 1. Name ")
     print(" 2. Cooking Time")
@@ -250,16 +249,23 @@ def edit_recipe():
     elif selected_field == "2": # Update cooking time
       correct_cooking_time_input = False
       while correct_cooking_time_input == False:
-        cooking_time = input("\nEnter updated recipe cooking time in minutes:  ")
-        if not cooking_time.isnumeric(): 
-          print("\nSorry, will only accept a number.")
-        elif int(cooking_time) < 1:
+        try:
+          cooking_time = input("\nEnter updated recipe cooking time in minutes:  ")
+          # if not cooking_time.isnumeric():
+        except ValueError:
+          print("\nSorry, will only accept a number. Please try again")
+          continue
+        if int(cooking_time) < 1:
           print("\nSorry, please enter a number greater than zero.")
         else:
           correct_cooking_time_input = True
-      session.query(Recipe).filter(Recipe.id == recipe_id_to_edit).update({Recipe.cooking_time: cooking_time})
+      
       recipe_to_edit.cooking_time = cooking_time
-      recipe_to_edit.difficulty(cooking_time, ingredients_str)
+      recipe_to_edit.calculate_difficulty()
+      session.query(Recipe).filter(Recipe.id == recipe_id_to_edit).update({
+          Recipe.cooking_time: cooking_time,
+          Recipe.difficulty: recipe_to_edit.difficulty
+        })
       session.commit()
       print("\nRecipe cooking time has been updated")
 
@@ -284,11 +290,14 @@ def edit_recipe():
             correct_ingredients = True
         if ingredients not in ingredients_list:
           ingredients_list.append(ingredients)
-         
-        session.query(Recipe).filter(Recipe.id == recipe_id_to_edit).update({Recipe.ingredients: ingredients})
-        recipe_to_edit.ingredients = ingredients_str
-        recipe_to_edit.difficulty(ingredients_str, cooking_time)
-        ingredients_str = ", ".join(ingredients_list)
+
+        recipe_to_edit.ingredients = ingredients
+        recipe_to_edit.calculate_difficulty()
+        ingredients = ", ".join(ingredients_list)
+        session.query(Recipe).filter(Recipe.id == recipe_id_to_edit).update({
+          Recipe.ingredients: ingredients,
+          Recipe.difficulty: recipe_to_edit.difficulty
+        })
         session.commit()
         print("\nIngredients have been updated")
     
