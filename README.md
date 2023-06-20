@@ -89,6 +89,55 @@ Exercise 1.5: Object-Oriented Programming in Python
         recipe_oop.py
         learning journal 1.5
 
+Exercise 1.6: Connecting to Databases in Python
+
+Learning Goals
+
+Create a MySQL database for the Recipe app
 
 
-  
+Exercise 1.7: Finalizing the Python Program
+Learning Goals
+
+Interact with a database using an object-relational mapper
+Build your final command-line Recipe application
+
+
+
+Exercise 2.1: Getting Started with Django
+
+Learning Goals
+
+Explain MVT architecture and compare it with MVC
+Summarise Django’s benefits and drawbacks 
+Install and get started with Django
+
+
+Exercise 2.2: Django Project Set Up
+
+Learning Goals
+
+Describe the basic structure of a Django project 
+Summarise the difference between projects and apps
+Create a Django project and run it locally
+Create a superuser for a Django web application
+
+Exercise 2.3: Django Models
+
+Learning Goals
+
+Discuss Django models, the “M” part of Django’s MVT architecture
+Create apps and models representing different parts of your web application 
+Write and run automated tests
+
+
+  Task 2.4
+Task Goals
+
+    Define the view (recipe_home in recipes/views.py)
+    Create the template for the defined view (recipe_home.html)
+    Map URL to the vie
+
+    w in recipes/urls.py
+    Register the view and URL in the main urls.py
+
